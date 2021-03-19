@@ -1,0 +1,163 @@
+version: '3.4'
+
+x-var:
+    publisher:
+        &APP_PUBLISHER blockchain-status-publisher
+    consumer:
+        &APP_CONSUMER blockchain-status-consumer
+    rabbit_addr:
+        &RABBITMQ_IP_ADDR 13.37.0.3
+    redis_addr:
+        &REDIS_IP_ADDR 13.37.0.2
+    postgres_addr:
+        &POSTGRES_IP_ADDR 13.37.0.4
+    bootnode:
+        &BOOTNODE_HOST 13.37.0.7
+    bootnode_key:
+        &BOOTNODE_KEY 890b6b5367ef6072455fedbd7a24ebac239d442b18c5ab9d26f58a349dad35ee5783a0dd543e4f454fed22db9772efe28a3ed6f21e75674ef6203e47803da682
+
+services:
+    redis:
+        image: redis:latest
+        container_name: redis
+        volumes:
+            - ./redis-data:/data
+        networks:
+            blockchain-system-network:
+                ipv4_address: *REDIS_IP_ADDR
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        container_name: rabbitmq
+        environment:
+            RABBITMQ_DEFAULT_USER: guest
+            RABBITMQ_DEFAULT_PASS: guest
+        ports:
+            - 15672:15672
+        networks:
+            blockchain-system-network:
+                ipv4_address: *RABBITMQ_IP_ADDR
+    postgres: 
+        image: postgres:latest
+        container_name: postgres
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./postgres-data:/var/lib/postgresql/data
+        environment:
+            POSTGRES_DB: postgres
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        networks:
+            blockchain-system-network:
+                ipv4_address: *POSTGRES_IP_ADDR
+    blockchain-status-consumer:
+        container_name: *APP_CONSUMER
+        build:
+            context: *APP_CONSUMER
+            dockerfile: Dockerfile
+        image: *APP_CONSUMER
+        depends_on:
+            - rabbitmq
+            - redis
+            - postgres
+        environment:
+            RABBITMQ_HOST: *RABBITMQ_IP_ADDR
+            REDIS_HOST: *REDIS_IP_ADDR
+            POSTGRES_HOST: *POSTGRES_IP_ADDR
+            POSTGRES_USER: postgres
+            POSTGRES_PASS: postgres
+        restart: always
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.5
+    blockchain-status-publisher:
+        container_name: *APP_PUBLISHER
+        build:
+            context: *APP_PUBLISHER
+            dockerfile: Dockerfile
+        image: *APP_PUBLISHER
+        depends_on:
+            - rabbitmq
+        environment:
+            RABBITMQ_HOST: *RABBITMQ_IP_ADDR
+            POLL_INTERVAL: 30000
+        restart: always
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.6
+    ethereum-bootnode:
+        container_name: ethereum-bootnode
+        build:
+            context: .
+            dockerfile: DockerfileBootNode
+        image: ethereum-bootnode
+        environment:
+            BOOTNODE_KEY: *BOOTNODE_KEY
+        networks:
+            blockchain-system-network:
+                ipv4_address: *BOOTNODE_HOST
+    ethereum-regularnode:
+        container_name: ethereum-regularnode
+        build:
+            context: .
+            dockerfile: DockerfileRegularNode
+        image: ethereum-regularnode
+        environment:
+            BOOTNODE_KEY: *BOOTNODE_KEY
+            BOOTNODE_HOST: *BOOTNODE_HOST
+            DATA_DIR: /ethereum/regular-node-data
+        volumes:
+            - /ethereum/regular-node-data /ethereum/regular-node-data
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.8
+    ethereum-minernode-1:
+        container_name: ethereum-minernode-1
+        build:
+            context: .
+            dockerfile: DockerfileMinerNode
+        image: ethereum-minernode-1
+        environment:
+            BOOTNODE_KEY: *BOOTNODE_KEY
+            BOOTNODE_HOST: *BOOTNODE_HOST
+            DATA_DIR: /ethereum/miner1-node-data
+        volumes:
+            - /ethereum/miner1-node-data /ethereum/miner1-node-data
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.9
+    ethereum-minernode-2:
+        container_name: ethereum-minernode-2
+        build:
+            context: .
+            dockerfile: DockerfileMinerNode
+        image: ethereum-minernode-2
+        environment:
+            BOOTNODE_KEY: *BOOTNODE_KEY
+            BOOTNODE_HOST: *BOOTNODE_HOST
+            DATA_DIR: /ethereum/miner2-node-data
+        volumes:
+            - /ethereum/miner2-node-data /ethereum/miner2-node-data
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.10
+    ethereum-minernode-3:
+        container_name: ethereum-minernode-3
+        build:
+            context: .
+            dockerfile: DockerfileMinerNode
+        image: ethereum-minernode-3
+        environment:
+            BOOTNODE_KEY: *BOOTNODE_KEY
+            BOOTNODE_HOST: *BOOTNODE_HOST
+            DATA_DIR: /ethereum/miner3-node-data
+        volumes:
+            - /ethereum/miner3-node-data /ethereum/miner3-node-data
+        networks:
+            blockchain-system-network:
+                ipv4_address: 13.37.0.11
+networks:
+    blockchain-system-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 13.37.0.0/24
