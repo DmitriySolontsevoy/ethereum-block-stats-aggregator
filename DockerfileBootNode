@@ -16,6 +16,7 @@ COPY --from=builder /go-ethereum/build/bin/geth /usr/local/bin/
 COPY --from=builder /go-ethereum/build/bin/bootnode /usr/local/bin/
 COPY --from=builder /go/genesis.json /genesis/genesis.json
 COPY --from=builder /go/bootnode.key /bootnode/bootnode.key
+COPY --from=builder /go/$DATA_DIR $DATA_DIR
 
 RUN geth init /genesis/genesis.json
-ENTRYPOINT bootnode -nodekey /bootnode/bootnode.key
+ENTRYPOINT bootnode --ipcdisable --networkid 777 --nat extip:$BOOTNODE_HOST --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --port 30301 --http.port 81

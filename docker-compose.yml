@@ -33,6 +33,8 @@ services:
             RABBITMQ_DEFAULT_PASS: guest
         ports:
             - 15672:15672
+        volumes:
+            - ./rabbitmq-data:/var/lib/rabbitmq/
         networks:
             blockchain-system-network:
                 ipv4_address: *RABBITMQ_IP_ADDR
@@ -92,6 +94,8 @@ services:
         image: ethereum-bootnode
         environment:
             BOOTNODE_KEY: *BOOTNODE_KEY
+        volumes:
+            - ./ethereum/boot-node-data:/ethereum/boot-node-data
         networks:
             blockchain-system-network:
                 ipv4_address: *BOOTNODE_HOST
@@ -106,7 +110,7 @@ services:
             BOOTNODE_HOST: *BOOTNODE_HOST
             DATA_DIR: /ethereum/regular-node-data
         volumes:
-            - /ethereum/regular-node-data /ethereum/regular-node-data
+            - ./ethereum/regular-node-data:/ethereum/regular-node-data
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.8
@@ -120,8 +124,10 @@ services:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
             DATA_DIR: /ethereum/miner1-node-data
+            PORT: 30303
+            HTTP_PORT: 82
         volumes:
-            - /ethereum/miner1-node-data /ethereum/miner1-node-data
+            - ./ethereum/miner1-node-data:/ethereum/miner1-node-data
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.9
@@ -135,8 +141,10 @@ services:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
             DATA_DIR: /ethereum/miner2-node-data
+            PORT: 30304
+            HTTP_PORT: 83
         volumes:
-            - /ethereum/miner2-node-data /ethereum/miner2-node-data
+            - ./ethereum/miner2-node-data:/ethereum/miner2-node-data
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.10
@@ -150,8 +158,10 @@ services:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
             DATA_DIR: /ethereum/miner3-node-data
+            PORT: 30305
+            HTTP_PORT: 84
         volumes:
-            - /ethereum/miner3-node-data /ethereum/miner3-node-data
+            - ./ethereum/miner3-node-data:/ethereum/miner3-node-data
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.11

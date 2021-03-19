@@ -14,6 +14,7 @@ RUN apk add --no-cache ca-certificates
 COPY --from=builder /go-ethereum/build/bin/geth /usr/local/bin/
 COPY --from=builder /go-ethereum/build/bin/bootnode /usr/local/bin/
 COPY --from=builder /go/genesis.json /genesis/genesis.json
+COPY --from=builder /go/$DATA_DIR $DATA_DIR
 
 RUN geth init /genesis/genesis.json
-ENTRYPOINT geth --datadir=$DATA_DIR --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --mine --miner.threads=1 --miner.etherbase=0x2200000000000000000000000000000000000000
+ENTRYPOINT geth --datadir=$DATA_DIR --networkid 777 --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --mine --miner.threads=1 --miner.etherbase=0x2200000000000000000000000000000000000000 --ipcdisable --port $PORT --http --http.port $HTTP_PORT

@@ -5,6 +5,10 @@
 
 /ethereum
 
+/rabbitmq-data
+
 /redis-data
 
 /postgres-data
+
+.goutputstream-3CKV00
