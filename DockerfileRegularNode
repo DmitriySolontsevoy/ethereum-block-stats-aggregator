@@ -18,4 +18,4 @@ COPY --from=builder /go/genesis.json /genesis/genesis.json
 COPY --from=builder /go/$DATA_DIR $DATA_DIR
 
 RUN geth init /genesis/genesis.json
-ENTRYPOINT geth --datadir=$DATA_DIR --networkid 777 --ipcdisable --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --port 30302 --http --http.port 80 --http.addr 0.0.0.0 --http.api eth
+ENTRYPOINT geth --datadir=$DATA_DIR --networkid 777 --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --ipcdisable  --port 30302 --http --http.port 80 --http.addr 0.0.0.0 --http.api eth

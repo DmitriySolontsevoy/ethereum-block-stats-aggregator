@@ -4,6 +4,7 @@ FROM golang:1.16-alpine as builder
 RUN apk add --no-cache make gcc musl-dev linux-headers git
 
 COPY /go-ethereum /go-ethereum
+CMD mkdir $DATA_DIR
 COPY genesis.json .
 COPY bootnode.key .
 RUN cd /go-ethereum && make all
@@ -19,4 +20,4 @@ COPY --from=builder /go/bootnode.key /bootnode/bootnode.key
 COPY --from=builder /go/$DATA_DIR $DATA_DIR
 
 RUN geth init /genesis/genesis.json
-ENTRYPOINT bootnode --ipcdisable --networkid 777 --nat extip:$BOOTNODE_HOST --bootnodes=enode://$BOOTNODE_KEY@$BOOTNODE_HOST:30301 --port 30301 --http.port 81
+ENTRYPOINT bootnode --nodekey=/bootnode/bootnode.key

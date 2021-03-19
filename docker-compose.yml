@@ -12,9 +12,9 @@ x-var:
     postgres_addr:
         &POSTGRES_IP_ADDR 13.37.0.4
     bootnode:
-        &BOOTNODE_HOST 13.37.0.7
+        &BOOTNODE_HOST $BOOTNODE_HOST
     bootnode_key:
-        &BOOTNODE_KEY 890b6b5367ef6072455fedbd7a24ebac239d442b18c5ab9d26f58a349dad35ee5783a0dd543e4f454fed22db9772efe28a3ed6f21e75674ef6203e47803da682
+        &BOOTNODE_KEY $BOOTNODE_KEY
 
 services:
     redis:
@@ -108,9 +108,9 @@ services:
         environment:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
-            DATA_DIR: /ethereum/regular-node-data
+            DATA_DIR: $REGULAR_NODE_DATA_DIR
         volumes:
-            - ./ethereum/regular-node-data:/ethereum/regular-node-data
+            - ./ethereum/regular-node-data:$REGULAR_NODE_DATA_DIR
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.8
@@ -123,11 +123,11 @@ services:
         environment:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
-            DATA_DIR: /ethereum/miner1-node-data
+            DATA_DIR: $MINER_1_NODE_DATA_DIR
             PORT: 30303
             HTTP_PORT: 82
         volumes:
-            - ./ethereum/miner1-node-data:/ethereum/miner1-node-data
+            - ./ethereum/miner1-node-data:$MINER_1_NODE_DATA_DIR
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.9
@@ -140,11 +140,11 @@ services:
         environment:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
-            DATA_DIR: /ethereum/miner2-node-data
+            DATA_DIR: $MINER_2_NODE_DATA_DIR
             PORT: 30304
             HTTP_PORT: 83
         volumes:
-            - ./ethereum/miner2-node-data:/ethereum/miner2-node-data
+            - ./ethereum/miner2-node-data:$MINER_2_NODE_DATA_DIR
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.10
@@ -157,11 +157,11 @@ services:
         environment:
             BOOTNODE_KEY: *BOOTNODE_KEY
             BOOTNODE_HOST: *BOOTNODE_HOST
-            DATA_DIR: /ethereum/miner3-node-data
+            DATA_DIR: $MINER_3_NODE_DATA_DIR
             PORT: 30305
             HTTP_PORT: 84
         volumes:
-            - ./ethereum/miner3-node-data:/ethereum/miner3-node-data
+            - ./ethereum/miner3-node-data:$MINER_3_NODE_DATA_DIR
         networks:
             blockchain-system-network:
                 ipv4_address: 13.37.0.11
