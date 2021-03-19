@@ -1,3 +1,10 @@
 /blockchain-status-consumer
-/blockchain-status-publusher
+/blockchain-status-publisher
+
 /go-ethereum
+
+/ethereum
+
+/redis-data
+
+/postgres-data
